@@ -121,7 +121,7 @@ def main():
     """Initiate and wait for redshift cluster deletion"""
 
     config = configparser.ConfigParser()
-    config.read('../dwh.cfg')
+    config.read('dwh.cfg')
 
     cluster_sg_id = create_cluster_security_group()
     iam_role = create_iam_role(config)
