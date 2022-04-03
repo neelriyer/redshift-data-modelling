@@ -3,8 +3,8 @@ import time
 import json
 import configparser
 from botocore.exceptions import ClientError
-# import datetime
-# from dateutil.tz import tzutc
+import datetime
+from dateutil.tz import tzutc
 
 redshift_client = boto3.client('redshift', region_name='us-west-2')
 iam_client = boto3.client('iam')
@@ -112,7 +112,7 @@ def create_iam_role(config):
     
     except ClientError as e:
         print(e)
-        # return {'Role': {'Path': '/', 'RoleName': 'my-redshift-role', 'RoleId': 'AROAWZF2ZHN6FN2IUWWCP', 'Arn': 'arn:aws:iam::466395675516:role/my-redshift-role', 'CreateDate': datetime.datetime(2022, 3, 6, 0, 27, 13, tzinfo=tzutc()), 'AssumeRolePolicyDocument': {'Version': '2012-10-17', 'Statement': [{'Action': 'sts:AssumeRole', 'Effect': 'Allow', 'Principal': {'Service': 'redshift.amazonaws.com'}}]}}, 'ResponseMetadata': {'RequestId': 'c286b8f0-84bf-41ed-9006-6d036f5fdcdb', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'c286b8f0-84bf-41ed-9006-6d036f5fdcdb', 'content-type': 'text/xml', 'content-length': '788', 'date': 'Sun, 06 Mar 2022 00:27:13 GMT'}, 'RetryAttempts': 0}}
+        return {'Role': {'Path': '/', 'RoleName': 'my-redshift-role', 'RoleId': 'AROAWZF2ZHN6FN2IUWWCP', 'Arn': 'arn:aws:iam::466395675516:role/my-redshift-role', 'CreateDate': datetime.datetime(2022, 3, 6, 0, 27, 13, tzinfo=tzutc()), 'AssumeRolePolicyDocument': {'Version': '2012-10-17', 'Statement': [{'Action': 'sts:AssumeRole', 'Effect': 'Allow', 'Principal': {'Service': 'redshift.amazonaws.com'}}]}}, 'ResponseMetadata': {'RequestId': 'c286b8f0-84bf-41ed-9006-6d036f5fdcdb', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': 'c286b8f0-84bf-41ed-9006-6d036f5fdcdb', 'content-type': 'text/xml', 'content-length': '788', 'date': 'Sun, 06 Mar 2022 00:27:13 GMT'}, 'RetryAttempts': 0}}
 
     
 
@@ -123,7 +123,10 @@ def main():
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 
+    # if config.get('SECURITY','SG_ID') is None:
     cluster_sg_id = create_cluster_security_group()
+    # else: 
+    #     cluster_sg_id = config.get('SECURITY','SG_ID')
     iam_role = create_iam_role(config)
     cluster_info = create_redshift_cluster(config, iam_role['Role']['Arn'], cluster_sg_id)
 
